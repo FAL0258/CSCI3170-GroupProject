@@ -85,6 +85,10 @@ public class SysInt {
         return (Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day));
     }
 
+    public void insertData(Scanner input){
+        boolean isInt = false;
+    }
+
     public String menu(){
         String toSetDate = date;
         while (true) {
