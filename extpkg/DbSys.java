@@ -2,29 +2,22 @@ package extpkg;
 
 import java.io.*;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Scanner;
-import java.util.Date;
 
 public class DbSys {
     public Connection currSession;
     public Scanner input;
-    public String date;
-
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    Date currDate = new Date();
+    public String date = "0000-00-00";
 
     public DbSys(Connection con){
         this.currSession = con;
         this.input = new Scanner(System.in);
-        this.date = dateFormat.format(currDate);
         menu();
     }
 
     public void printMenu() {
         System.out.println("The System Date is now: " + date);
-        System.out.println("<This is the Book Ordering System.");
+        System.out.println("<This is the Book Ordering System.>");
         System.out.println("---------------------------------------");
         System.out.println("1. System interface.");
         System.out.println("2. Customer interface.");
@@ -52,7 +45,8 @@ public class DbSys {
             }
             switch (choice) {
                 case 1:
-                    new SysInt(currSession, input);
+                    SysInt currSys = new SysInt(currSession, input, date);
+                    date = currSys.menu();
                     break;
 
                 case 2:

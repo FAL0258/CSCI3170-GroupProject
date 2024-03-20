@@ -15,7 +15,7 @@ public class BookInt {
     }
 
     public void printMenu(){
-        System.out.println("<This is the bookstore interface.");
+        System.out.println("<This is the bookstore interface.>");
         System.out.println("---------------------------------------");
         System.out.println("1. Order Update.");
         System.out.println("2. Order Query.");
