@@ -1,6 +1,5 @@
 package DBs;
 
-import java.io.*;
 import java.sql.*;
 
 public class BookOrderedDB {
@@ -14,5 +13,18 @@ public class BookOrderedDB {
         this.ISBN = ISBN;
         this.quantity = quantity;
 
+    }
+
+    public void insertDB(Connection con){
+        try{
+            PreparedStatement pstmt = con.prepareStatement("INSERT INTO bookOrdered (oID, ISBN, quantity) VALUES (?, ?, ?)");
+            pstmt.setString(1, oID);
+            pstmt.setString(2, ISBN);
+            pstmt.setInt(3, quantity);
+            pstmt.execute();
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
     }
 }

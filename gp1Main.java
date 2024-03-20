@@ -29,7 +29,6 @@ class gp1Main{
     public static void main(String[] args){
         Connection con = connectToMySQL();
 
-
         // For local testing
         // Connection con = null;
         new DbSys(con);
