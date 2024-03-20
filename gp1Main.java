@@ -1,8 +1,6 @@
-import java.io.*;
 import java.sql.*;
 
 import DBinterface.*;
-import DBs.*;
 
 class gp1Main{
     public static String dbAddress = "jdbc:oracle:thin://@db18.cse.cuhk.edu.hk:1521/oradb.cse.cuhk.edu.hk";

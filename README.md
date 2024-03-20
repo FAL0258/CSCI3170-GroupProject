@@ -4,4 +4,4 @@
 - Tai Long Kwan Jeffrey, 1155152117
 
 # Instructions
-1. 
+1. Type `sh run.sh` in your terminal
