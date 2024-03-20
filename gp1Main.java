@@ -1,6 +1,8 @@
 import java.io.*;
 import java.sql.*;
-import extpkg.*;
+
+import DBinterface.*;
+import DBs.*;
 
 class gp1Main{
     public static String dbAddress = "jdbc:oracle:thin://@db18.cse.cuhk.edu.hk:1521/oradb.cse.cuhk.edu.hk";
@@ -25,11 +27,11 @@ class gp1Main{
     }
 
     public static void main(String[] args){
-        // Connection con = connectToMySQL();
+        Connection con = connectToMySQL();
 
 
         // For local testing
-        Connection con = null;
+        // Connection con = null;
         new DbSys(con);
     }
 }

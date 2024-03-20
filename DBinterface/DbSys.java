@@ -1,27 +1,30 @@
-package extpkg;
+package DBinterface;
 
 import java.io.*;
 import java.sql.*;
 import java.util.Scanner;
+import DBs.*;
 
-public class CusInt {
+public class DbSys {
     public Connection currSession;
     public Scanner input;
+    public String date = "0000-00-00";
 
-    public CusInt(Connection con, Scanner input){
+    public DbSys(Connection con){
         this.currSession = con;
-        this.input = input;
+        this.input = new Scanner(System.in);
         menu();
     }
 
-    public void printMenu(){
-        System.out.println("<This is the customer interface.>");
+    public void printMenu() {
+        System.out.println("The System Date is now: " + date);
+        System.out.println("<This is the Book Ordering System.>");
         System.out.println("---------------------------------------");
-        System.out.println("1. Book Search.");
-        System.out.println("2. Order Creation.");
-        System.out.println("3. Order Altering.");
-        System.out.println("4. Order Query.");
-        System.out.println("5. Back to main menu.\n");
+        System.out.println("1. System interface.");
+        System.out.println("2. Customer interface.");
+        System.out.println("3. Bookstore interface.");
+        System.out.println("4. Show System Date.");
+        System.out.println("5. Quit the system......\n");
         System.out.printf("Please enter your choice??..");
     }
 
@@ -43,14 +46,15 @@ public class CusInt {
             }
             switch (choice) {
                 case 1:
-                    
+                    SysInt currSys = new SysInt(currSession, input, date);
+                    date = currSys.menu();
                     break;
 
                 case 2:
-
+                    new CusInt(currSession, input);
                     break;
                 case 3:
-                    
+                    new BookInt(currSession, input);
                     break;
                 case 4:
 

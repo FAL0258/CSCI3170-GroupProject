@@ -1,29 +1,27 @@
-package extpkg;
+package DBinterface;
 
 import java.io.*;
 import java.sql.*;
 import java.util.Scanner;
+import DBs.*;
 
-public class DbSys {
+public class BookInt {
     public Connection currSession;
     public Scanner input;
-    public String date = "0000-00-00";
 
-    public DbSys(Connection con){
+    public BookInt(Connection con, Scanner input){
         this.currSession = con;
-        this.input = new Scanner(System.in);
+        this.input = input;
         menu();
     }
 
-    public void printMenu() {
-        System.out.println("The System Date is now: " + date);
-        System.out.println("<This is the Book Ordering System.>");
+    public void printMenu(){
+        System.out.println("<This is the bookstore interface.>");
         System.out.println("---------------------------------------");
-        System.out.println("1. System interface.");
-        System.out.println("2. Customer interface.");
-        System.out.println("3. Bookstore interface.");
-        System.out.println("4. Show System Date.");
-        System.out.println("5. Quit the system......\n");
+        System.out.println("1. Order Update.");
+        System.out.println("2. Order Query.");
+        System.out.println("3. N most Popular Book Query.");
+        System.out.println("4. Back to main menu.\n");
         System.out.printf("Please enter your choice??..");
     }
 
@@ -45,20 +43,16 @@ public class DbSys {
             }
             switch (choice) {
                 case 1:
-                    SysInt currSys = new SysInt(currSession, input, date);
-                    date = currSys.menu();
+                    
                     break;
 
                 case 2:
-                    new CusInt(currSession, input);
-                    break;
-                case 3:
-                    new BookInt(currSession, input);
-                    break;
-                case 4:
 
                     break;
-                case 5:
+                case 3:
+                    
+                    break;
+                case 4:
                     return;
                 default:
                     System.out.println("Please select the correct choice.");

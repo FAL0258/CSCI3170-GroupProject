@@ -1,8 +1,11 @@
-package extpkg;
+package DBinterface;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Scanner;
+import DBs.*;
 
 public class SysInt {
     public Connection currSession;
@@ -85,8 +88,92 @@ public class SysInt {
         return (Integer.toString(year) + "-" + Integer.toString(month) + "-" + Integer.toString(day));
     }
 
+    public void createTable(){
+        try{
+            PreparedStatement[] pstmts = {
+                currSession.prepareStatement("CREATE TABLE book (ISBN CHAR(13) NOT NULL, bTitle VARCHAR(100) NOT NULL, price INTEGER NOT NULL, copies INTEGER NOT NULL, PRIMARY KEY (ISBN))"),
+                currSession.prepareStatement("CREATE TABLE authorship (ISBN CHAR(13) NOT NULL, aName VARCHAR(50) NOT NULL, PRIMARY KEY (ISBN, aName))"),
+                currSession.prepareStatement("CREATE TABLE bookOrdered (oID CHAR(8) NOT NULL, ISBN CHAR(13) NOT NULL, quantity INTEGER NOT NULL, PRIMARY KEY (oID, ISBN))"),
+                // currSession.prepareStatement("CREATE TABLE order (oID CHAR(8) NOT NULL, cID CHAR(10) NOT NULL, oDate CHAR(10) NOT NULL, status CHAR(1) NOT NULL, charge INTEGER NOT NULL, PRIMARY KEY (oId))"),
+                currSession.prepareStatement("CREATE TABLE customer (cID CHAR(10) NOT NULL, cName VARCHAR(50) NOT NULL, cred_card CHAR(19) NOT NULL, address VARCHAR(200) NOT NULL, PRIMARY KEY(cID))")
+            };
+            for(PreparedStatement pstmt : pstmts) {
+                pstmt.execute();
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+    
+    }
+
+    public void deleteTable(){
+        try{
+            PreparedStatement[] pstmts = {
+                currSession.prepareStatement("DROP TABLE book"),
+                currSession.prepareStatement("DROP TABLE authorship"),
+                currSession.prepareStatement("DROP TABLE bookOrdered"),
+                // currSession.prepareStatement("DROP TABLE order"),
+                currSession.prepareStatement("DROP TABLE customer")
+            };
+            for(PreparedStatement pstmt : pstmts) {
+                pstmt.execute();
+            }
+        }
+        catch(SQLException e){
+            System.out.println(e);
+        }
+    }
+
     public void insertData(Scanner input){
-        boolean isInt = false;
+        BufferedReader reader;
+
+        System.out.println("Please enter the folder path");
+        String path = input.next();
+        try{
+            Path fullpath = Paths.get(path);
+            File folder = new File(fullpath.toAbsolutePath().toString());
+            // System.out.println(fullpath.toAbsolutePath().toString());
+
+            System.out.print("Processing...");
+            for(File file : folder.listFiles()){
+                
+                reader = new BufferedReader(new FileReader(file));
+                String line = reader.readLine();
+                String fileName = file.getName().toString().replaceFirst("[.][^.]+$", "");
+                // System.out.println(file);
+                // System.out.println(fileName);
+
+                while (line != null) {
+                    String[] elements = line.split("\\|");
+                    switch (fileName) {
+                        case "book_author":
+
+                            break;
+                        case "book":
+                            BookDB thisBook = new BookDB(elements[0], elements[1], Integer.valueOf(elements[2]), Integer.valueOf(elements[3]));
+                            thisBook.insertDB(currSession);
+                            break;
+                        case "customer":
+
+                            break;
+                        case "ordering":
+
+                            break;
+                        case "orders":
+
+                            break;
+                        default:
+                            System.out.println("Unknown file");
+                    }
+                    line = reader.readLine();
+                }
+                reader.close();
+            }
+        }
+        catch (Exception e){
+            System.out.println("Folder / file not found, please try again.");
+        }
     }
 
     public String menu(){
@@ -108,14 +195,14 @@ public class SysInt {
             }
             switch (choice) {
                 case 1:
-                    
+                    createTable();
                     break;
 
                 case 2:
-
+                    deleteTable();
                     break;
                 case 3:
-                    
+                    insertData(input);
                     break;
                 case 4:
                     toSetDate = setDate(input);
