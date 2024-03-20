@@ -53,7 +53,7 @@ public class SysInt {
             }
         }
         catch(SQLException e){
-            System.out.println(e);
+            System.out.println("No records found from the database");
         }
         return null; 
     }
@@ -62,8 +62,7 @@ public class SysInt {
         // First query for latest date from current records
         String latestDate = queryLastDate(currSession);
         if (latestDate == null){
-            System.out.println("No records found from the database");
-            return date;
+            latestDate = "0000-00-00";
         }
         
 
