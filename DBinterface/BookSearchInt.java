@@ -309,7 +309,6 @@ public class BookSearchInt {
                     break;
 
                 case 4:
-                    subInput.close();
                     return;
                 default:
                     System.out.println("Please select the correct choice.");
