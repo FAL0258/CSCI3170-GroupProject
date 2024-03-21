@@ -95,11 +95,11 @@ public class BookSearchInt {
 
             int recordCount = 1;
             int authorCount = 1;
+
+            String subT = title.replaceAll("%", "");
+            subT = subT.replaceAll("_", ""); 
             // Query for the exact match first if %or_ located at the beginning or the end of the string
             if (needExactSearch(title)){
-                String subT = title.replaceAll("%", "");
-                subT = subT.replaceAll("_", ""); 
-
                 query = "SELECT * FROM book WHERE bTitle = '" + subT + "'";
                 rs = stmt.executeQuery(query);
 
@@ -125,9 +125,21 @@ public class BookSearchInt {
                 }
             }
             
-            if (!(title.contains("%") || title.contains("_"))) return;
+            if (!(title.contains("%") || title.contains("_"))){
+                if ( recordCount == 1 ){
+                    System.out.println("No records found...");
+                    System.out.println();
+                }
+                return;
+            }
 
-            query = "SELECT * FROM book WHERE bTitle LIKE '" + title + "' ORDER BY bTitle ASC" ;
+            // Exclude the exact search result
+            if (subT.length() == 0){
+                query = "SELECT * FROM book WHERE bTitle LIKE '" + title + "' ORDER BY bTitle ASC" ;
+            }
+            else{
+                query = "SELECT * FROM book WHERE bTitle LIKE '" + title + "' AND bTitle != '" + subT + "' ORDER BY bTitle ASC" ;
+            }
             rs = stmt.executeQuery(query);
             System.out.println();
             
@@ -149,11 +161,6 @@ public class BookSearchInt {
                 }
                 System.out.println();
             }
-
-            if (recordCount == 1){
-                System.out.println("No records found...");
-                System.out.println();
-            }
             
         }
         catch(SQLException e){
@@ -162,7 +169,107 @@ public class BookSearchInt {
     }
 
     public void queryByAuthor(Connection con, String author){
+        try{
+            Statement stmt = con.createStatement();
+            ResultSet rs;
+            String query = "";
 
+            Statement authorStmt = con.createStatement();
+            ResultSet authorRs;
+            Statement bookStmt = con.createStatement();
+            ResultSet bookRs;
+            String ISBN;
+            String subQuery = "";
+            String subQuery2 = "";
+
+            int recordCount = 1;
+            int authorCount = 1;
+
+            String subA = author.replaceAll("%", "");
+            subA = subA.replaceAll("_", ""); 
+            // Query for the exact match first if %or_ located at the beginning or the end of the string
+            if (needExactSearch(author) ){
+
+
+                query = "SELECT * FROM authorship WHERE aName = '" + subA + "' ORDER BY ISBN ASC";
+                rs = stmt.executeQuery(query);
+
+                System.out.println();
+                while(rs.next()){
+                    // Exact match exists
+                    ISBN = rs.getString("ISBN");
+                    
+                    subQuery = "SELECT * FROM book WHERE ISBN = '" + ISBN + "'";
+                    bookRs = bookStmt.executeQuery(subQuery);
+
+                    while(bookRs.next()){
+                        System.out.println("Record " + recordCount++);
+                        System.out.println("ISBN: " + ISBN);
+                        System.out.println("Book Title: " + bookRs.getString("bTitle"));
+                        System.out.println("Unit Price: " + bookRs.getInt("price"));
+                        System.out.println("No Of Available: " + bookRs.getInt("copies"));
+                        System.out.println("Authors:");
+
+                        
+                        subQuery2 = "SELECT aName FROM authorship WHERE ISBN = '" + ISBN + "' ORDER BY aName ASC";
+                        authorRs = authorStmt.executeQuery(subQuery2);
+                        authorCount = 1;
+                        while(authorRs.next()){
+                            System.out.println(authorCount++ + " : " + authorRs.getString("aName"));
+                        }
+                        System.out.println();
+                    }
+                }
+            }
+            
+            if (!(author.contains("%") || author.contains("_"))){
+                if ( recordCount == 1 ){
+                    System.out.println("No records found...");
+                    System.out.println();
+                }
+                return;
+            }
+
+            if (subA.length() == 0){
+                query = "SELECT * FROM authorship WHERE aName LIKE '" + author + "' ORDER BY ISBN ASC" ;
+            }
+            else{
+                query = "SELECT * FROM authorship WHERE aName LIKE '" + author + "' AND aName != '" + subA + "' ORDER BY ISBN ASC" ;
+            }
+
+            rs = stmt.executeQuery(query);
+            System.out.println();
+            
+            while(rs.next()){
+                // Exact match exists
+                ISBN = rs.getString("ISBN");
+                
+                subQuery = "SELECT * FROM book WHERE ISBN = '" + ISBN + "'";
+                bookRs = bookStmt.executeQuery(subQuery);
+
+                while(bookRs.next()){
+                    System.out.println("Record " + recordCount++);
+                    System.out.println("ISBN: " + ISBN);
+                    System.out.println("Book Title: " + bookRs.getString("bTitle"));
+                    System.out.println("Unit Price: " + bookRs.getInt("price"));
+                    System.out.println("No Of Available: " + bookRs.getInt("copies"));
+                    System.out.println("Authors:");
+
+                    
+                    subQuery2 = "SELECT aName FROM authorship WHERE ISBN = '" + ISBN + "' ORDER BY aName ASC";
+                    authorRs = authorStmt.executeQuery(subQuery2);
+                    authorCount = 1;
+                    while(authorRs.next()){
+                        System.out.println(authorCount++ + " : " + authorRs.getString("aName"));
+                    }
+                    System.out.println();
+                }
+            }
+
+        }
+        catch(SQLException e){
+            System.out.println("Error: " + e);
+        }
     }
 
     public void menu(){
@@ -202,6 +309,7 @@ public class BookSearchInt {
                     break;
 
                 case 4:
+                    subInput.close();
                     return;
                 default:
                     System.out.println("Please select the correct choice.");
