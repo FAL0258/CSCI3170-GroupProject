@@ -130,7 +130,7 @@ public class SysInt {
         try{
             PreparedStatement[] pstmts = {
                 currSession.prepareStatement("CREATE TABLE book (ISBN CHAR(13) NOT NULL, bTitle VARCHAR(100) NOT NULL, price INTEGER NOT NULL, copies INTEGER NOT NULL, PRIMARY KEY (ISBN))"),
-                currSession.prepareStatement("CREATE TABLE orders (oID CHAR(8) NOT NULL, oDate CHAR(10) NOT NULL, status CHAR(1) NOT NULL, charge INTEGER NOT NULL, cID CHAR(10) NOT NULL, PRIMARY KEY (oID))"),
+                currSession.prepareStatement("CREATE TABLE orders (oID CHAR(8) NOT NULL, oDate CHAR(10) NOT NULL, status CHAR(1) NOT NULL, charge INTEGER NOT NULL, cID VARCHAR(10) NOT NULL, PRIMARY KEY (oID))"),
                 currSession.prepareStatement("CREATE TABLE customer (cID VARCHAR(10) NOT NULL, cName VARCHAR(50) NOT NULL, address VARCHAR(200) NOT NULL, cred_card CHAR(19) NOT NULL, PRIMARY KEY(cID))"),
                 currSession.prepareStatement("CREATE TABLE authorship (ISBN CHAR(13) NOT NULL, aName VARCHAR(50) NOT NULL, PRIMARY KEY (ISBN, aName))"),
                 currSession.prepareStatement("CREATE TABLE bookOrdered (oID CHAR(8) NOT NULL, ISBN CHAR(13) NOT NULL, quantity INTEGER NOT NULL, PRIMARY KEY (oID, ISBN))")
