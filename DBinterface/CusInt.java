@@ -17,6 +17,18 @@ public class CusInt {
         menu();
     }
 
+    public int getInt(String arr, int begin, int end){
+        double output = 0;
+        double multiplier;
+        int pre = end - begin;
+        for(int i = begin; i < end + 1; i++){
+            multiplier = Math.pow(Double.valueOf(10), Double.valueOf(pre--));
+            // System.out.println(arr.charAt(i) + "*" + multiplier);
+            output += Character.getNumericValue(arr.charAt(i))*multiplier;
+        }
+        return (int)output; 
+    }
+
     public void printMenu(){
         System.out.println("<This is the customer interface.>");
         System.out.println("---------------------------------------");
@@ -86,7 +98,42 @@ public class CusInt {
                     break;
             }
         }
+    }
 
+    public void orderAlter(){
+
+    }
+
+    public void orderQuery(String cID, Scanner input){
+        System.out.print("Please input the Year: ");
+        String response = input.next();
+        int qYear = Integer.parseInt(response);
+
+        try{
+            Statement stmt = currSession.createStatement();
+            String query = "SELECT * FROM orders WHERE cID = '" + cID + "' ORDER BY oID ASC";
+            ResultSet rs = stmt.executeQuery(query);
+            int recordCount = 1;
+
+            String resultDate;
+            int resultYear;
+            while(rs.next()){
+                resultDate = rs.getString("oDate");
+                resultYear = getInt(resultDate.toString(), 0, 3);
+                System.out.println();
+                if (resultYear == qYear){
+                    System.out.println("Record : " + recordCount++);
+                    System.out.println("OrderID : " + rs.getString("oID"));
+                    System.out.println("OrderDate : " + resultDate);
+                    System.out.println("Charge : " + rs.getInt("charge"));
+                    System.out.println("Shipping stauts : " + rs.getString("status"));
+                    System.out.println();
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 
     public void menu(){
@@ -94,6 +141,7 @@ public class CusInt {
             printMenu();
             int choice = 0;
             boolean isInt = false;
+            String cID;
             while(!isInt){
                 try{
                     choice = input.nextInt();
@@ -112,17 +160,23 @@ public class CusInt {
 
                 case 2:
                     System.out.print("Please enter your customerID??");
-                    String cID = input.next();
+                    cID = input.next();
                     if (checkCustomer(cID)) orderCreation(cID, input, today);
                     break;
-                case 3:
-                    
-                    break;
-                case 4:
 
+                case 3:
+                    orderAlter();
                     break;
+
+                case 4:
+                    System.out.print("Please Input Customer ID: ");
+                    cID = input.next();
+                    if (checkCustomer(cID)) orderQuery(cID, input);
+                    break;
+
                 case 5:
                     return;
+
                 default:
                     System.out.println("Please select the correct choice.");
             }
