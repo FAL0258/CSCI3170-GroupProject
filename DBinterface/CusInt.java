@@ -8,10 +8,12 @@ import DBs.*;
 public class CusInt {
     public Connection currSession;
     public Scanner input;
+    public String today;
 
-    public CusInt(Connection con, Scanner input){
+    public CusInt(Connection con, Scanner input, String today){
         this.currSession = con;
         this.input = input;
+        this.today = today;
         menu();
     }
 
@@ -48,7 +50,7 @@ public class CusInt {
     }
 
 
-    public void orderCreation(String cID, Scanner input){
+    public void orderCreation(String cID, Scanner input, String today){
         OrderCart cart = new OrderCart(currSession);
         boolean ok = false;
         String response;
@@ -66,7 +68,7 @@ public class CusInt {
 
                 case "F":
                     ok = true;
-                    cart.updateBackDB();
+                    cart.updateBackDB(today, cID);
                     break;
             
                 default:
@@ -76,7 +78,7 @@ public class CusInt {
                     System.out.print("Please enter the quantity of the order: ");
                     desiredQuantity = Integer.parseInt(input.next());
                     if (desiredQuantity < 1){
-                        System.out.print("You need to enter at least one quantity!");
+                        System.out.println("You need to enter at least one quantity!");
                     }
                     else{
                         cart.add(response, desiredQuantity);
@@ -111,7 +113,7 @@ public class CusInt {
                 case 2:
                     System.out.print("Please enter your customerID??");
                     String cID = input.next();
-                    if (checkCustomer(cID)) orderCreation(cID, input);
+                    if (checkCustomer(cID)) orderCreation(cID, input, today);
                     break;
                 case 3:
                     

@@ -29,6 +29,38 @@ public class OrderCart {
         }
     }
 
+    public String getOrderID(){
+        try{
+            Statement stmt = currSession.createStatement();
+            String query = "SELECT oID FROM orders ORDER BY oID DESC";
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                return rs.getString("oID");
+            }
+            return null;
+        }
+        catch(SQLException e){
+            System.out.print("Error: " + e);
+            return null;
+        }
+    }
+
+    public int getBookPrice(String ISBN){
+        try{
+            Statement stmt = currSession.createStatement();
+            String query = "SELECT price FROM book WHERE ISBN = '" + ISBN + "'";
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                return rs.getInt("price");
+            }
+            return -1;
+        }
+        catch(SQLException e){
+            System.out.print("Error: " + e);
+            return -1;
+        }
+    }
+
     public void add(String ISBN, int quantity){
         int stock = getBookStock(ISBN);
         if (stock == -1) return;
@@ -61,26 +93,64 @@ public class OrderCart {
         }
     }
 
-    public void updateBackDB(){
+    public void updateBackDB(String today, String cID){
         PreparedStatement pstmt;
+        String query;
+        String currOrderID = getOrderID();
+        int bookPrice = 0;
+        int shippingPrice = 0;
+        int totalCharge = 0;
+        int noOfBook = 0;
+
+        if (currOrderID == null){
+            currOrderID = "00000000";
+        }
+        else{
+            currOrderID = String.format("%0" + currOrderID.length() + "d", Integer.parseInt(currOrderID) + 1);
+        }
+
         try{
-            // Update back to book database
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 String key = entry.getKey();
                 Integer value = entry.getValue();
+
                 int stock = getBookStock(key);
                 int updateStock = stock - value;
-                String query = "UPDATE book set copies = ? where ISBN = ? ";
+
+                bookPrice += (getBookPrice(key)*value);
+                noOfBook += value;
+
+                // Update back to book database
+                query = "UPDATE book set copies = ? where ISBN = ? ";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setInt(1, updateStock);
                 pstmt.setString(2, key);
                 pstmt.executeUpdate();
+
+                // Update back to bookOrdered database
+                query = "INSERT INTO bookOrdered (oID, ISBN, quantity) VALUES (?, ?, ?)";
+                pstmt = currSession.prepareStatement(query);
+                pstmt.setString(1, currOrderID);
+                pstmt.setString(2, key);
+                pstmt.setInt(3, value);
+                pstmt.execute();
             }
 
+            shippingPrice = noOfBook*10 + 10;
+            totalCharge = bookPrice + shippingPrice;
+
+            
             // Update back to orders database
+            query = "INSERT INTO orders (oID, oDate, status, charge, cID) VALUES (?, ?, ?, ?, ?)";
+            pstmt = currSession.prepareStatement(query);
+            pstmt.setString(1, currOrderID);
+            pstmt.setString(2, today);
+            pstmt.setString(3, "N");
+            pstmt.setInt(4, totalCharge);
+            pstmt.setString(5, cID);
+            pstmt.execute();
 
 
-            // Update back to bookOrdered database
         }
         catch(SQLException e){
             System.out.println(e);

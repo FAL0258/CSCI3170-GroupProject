@@ -51,7 +51,7 @@ public class DbSys {
                     break;
 
                 case 2:
-                    new CusInt(currSession, input);
+                    new CusInt(currSession, input, date);
                     break;
                 case 3:
                     new BookInt(currSession, input);
