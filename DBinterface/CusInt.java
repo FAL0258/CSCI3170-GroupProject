@@ -100,8 +100,72 @@ public class CusInt {
         }
     }
 
-    public void orderAlter(){
+    public void orderAlter(String oID, Scanner input){
+        boolean ok = false;
+        boolean shipped = false;
+        while (!ok){
+            try{
+                OrderAlter alterList = new OrderAlter(currSession);
 
+                Statement orderStmt = currSession.createStatement();
+                String ordersQuery = "SELECT * FROM orders WHERE oID = '" + oID + "'";
+                ResultSet orderRs = orderStmt.executeQuery(ordersQuery);
+                int count = 0;
+                while(orderRs.next()){
+                    count++;
+                    Statement subStmt = currSession.createStatement();
+                    String subQuery = "SELECT * FROM bookOrdered WHERE oID = '" + oID + "'";
+                    ResultSet subRs = subStmt.executeQuery(subQuery);
+
+                    if (orderRs.getString("status").equals("Y")){
+                        shipped = true;
+                    }
+                    System.out.println("order_id:" + oID + "\tshipping:" + orderRs.getString("Status") + "\tcharge=" + orderRs.getInt("charge") + "\tcustomerId=" + orderRs.getString("cID"));
+                    
+                    int bookNo = 1;
+                    while(subRs.next()){
+                        alterList.add(Integer.toString(bookNo), subRs.getString("ISBN"));
+                        System.out.println("book no: " + bookNo++ + "\tISBN = " + subRs.getString("ISBN") + "\tquantity = " + subRs.getInt("quantity"));
+                    }
+                }
+                if (count == 0){
+                    System.out.println("Order not found!");
+                }
+
+                if (!shipped){
+                    System.out.println("Which book you want to alter (input book no.):");
+                    String pickedBook = input.next();
+                    System.out.println("input add or remove or \"Q\" to exit");
+                    String option = input.next();
+                    String addNum;
+                    switch(option) {
+                        case "add":
+                            System.out.print("Input the number: ");
+                            addNum = input.next();
+                            alterList.alterAdd(pickedBook, Integer.valueOf(addNum));
+                            break;
+                        
+                        case "remove":
+
+                            break;
+
+                        case "Q":
+                            ok = true;
+                        
+                        default:
+                            System.out.println("Please select the correct choice.");
+                    }
+                }
+                else{
+                    System.out.println("This order has been shipped, you can not alter this record...");
+                    System.out.println();
+                    ok = true;
+                }
+            }
+            catch(SQLException e){
+                System.out.println("Order not found!");
+            }
+        }
     }
 
     public void orderQuery(String cID, Scanner input){
@@ -142,6 +206,7 @@ public class CusInt {
             int choice = 0;
             boolean isInt = false;
             String cID;
+            String oID;
             while(!isInt){
                 try{
                     choice = input.nextInt();
@@ -165,7 +230,9 @@ public class CusInt {
                     break;
 
                 case 3:
-                    orderAlter();
+                    System.out.print("Please enter the OrderID that you want to change: ");
+                    oID = input.next();
+                    orderAlter(oID, input);
                     break;
 
                 case 4:
