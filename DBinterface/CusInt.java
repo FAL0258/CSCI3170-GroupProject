@@ -44,7 +44,7 @@ public class CusInt {
             }
             switch (choice) {
                 case 1:
-                    
+                    new BookSearchInt(currSession, input);
                     break;
 
                 case 2:

@@ -14,7 +14,7 @@ class gp1Main{
             Class.forName("oracle.jdbc.OracleDriver");
             con = DriverManager.getConnection(dbAddress, dbUsername, dbPassword);
         } catch (ClassNotFoundException e){
-            System.out.println("[Error]: Java MySQL DB Driver not found!!");
+            System.out.println("Driver not found!");
             System.err.println(e);
             System.exit(0);
         } catch (SQLException e){

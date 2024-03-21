@@ -217,7 +217,7 @@ public class SysInt {
                 }
                 reader.close();
             }
-            System.out.print("Data is loaded!");
+            System.out.print("Data is loaded!\n");
         }
         catch (Exception e){
             System.out.println("Folder / file not found, please try again.");
