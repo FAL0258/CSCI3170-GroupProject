@@ -163,7 +163,8 @@ public class CusInt {
                     String pickedBook = input.next();
                     if (!alterList.map.containsKey(pickedBook)){
                         System.out.println("Wrong book no, please try again!");
-                        continue;
+                        ok = true;
+                        return;
                     }
                     System.out.println("input add or remove or \"Q\" to exit");
                     String option = input.next();
@@ -176,7 +177,9 @@ public class CusInt {
                             break;
                         
                         case "remove":
-
+                            System.out.print("Input the number: ");
+                            addNum = input.next();
+                            exit = alterList.alterRemove(pickedBook, oID, Integer.valueOf(addNum), today);
                             break;
 
                         case "Q":

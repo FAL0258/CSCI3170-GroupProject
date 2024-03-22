@@ -140,17 +140,19 @@ public class OrderAlter {
 
         String targetISBN = map.get(key);
         int bookStock = getBookStock(targetISBN);
+        int orderQuantity = getOrderQuantity(oID, targetISBN);
 
         PreparedStatement pstmt;
         String query;
-        if (quantity > bookStock){
-            System.out.println("Insufficient stock of the current book\n");
+
+        if ( (orderQuantity - quantity) < 0 ){
+            System.out.println("Maximum removable number exceeds, please try again!\n");
             return false;
         }
         else{
             try{
                 // Update 'copies' FROM book
-                int updatedCopies = bookStock - quantity;
+                int updatedCopies = bookStock + quantity;
                 query = "UPDATE book SET copies = ? WHERE ISBN = ? ";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setInt(1, updatedCopies);
@@ -160,7 +162,7 @@ public class OrderAlter {
                 // Update 'oDate' and 'charge' FROM orders
                 int addedBookPrice = (quantity*getBookPrice(targetISBN)) + (quantity*10);
 
-                int updatedPrice = addedBookPrice + getOrderCharge(oID); 
+                int updatedPrice = getOrderCharge(oID) - addedBookPrice; 
                 query = "UPDATE orders SET oDate = ?, charge = ? WHERE oID = ? ";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setString(1, today);
@@ -169,7 +171,7 @@ public class OrderAlter {
                 pstmt.executeUpdate();
 
                 // Update 'quantity' FROM bookOrdered
-                int updatedQuantity = getOrderQuantity(oID, targetISBN) + quantity;
+                int updatedQuantity = orderQuantity - quantity;
                 query = "UPDATE bookOrdered SET quantity = ? WHERE ISBN = ? AND oID = ?";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setInt(1, updatedQuantity);
