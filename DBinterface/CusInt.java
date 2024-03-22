@@ -61,6 +61,27 @@ public class CusInt {
         }
     }
 
+    public boolean checkOrder(String oID){
+        try{
+            Statement stmt = currSession.createStatement();
+            String query = "SELECT * FROM orders WHERE oID = '" + oID + "'";
+            ResultSet rs = stmt.executeQuery(query);
+            int count = 0;
+            while(rs.next()){
+                count++;
+            }
+            if (count == 0){
+                System.out.println("Order not found!");
+                return false;
+            }
+            return true;
+        }
+        catch(SQLException e){
+            System.out.println("Order not found!");
+            return false;
+        }
+    }
+
 
     public void orderCreation(String cID, Scanner input, String today){
         OrderCart cart = new OrderCart(currSession);
@@ -140,6 +161,10 @@ public class CusInt {
                 if (!shipped){
                     System.out.println("Which book you want to alter (input book no.):");
                     String pickedBook = input.next();
+                    if (!alterList.map.containsKey(pickedBook)){
+                        System.out.println("Wrong book no, please try again!");
+                        continue;
+                    }
                     System.out.println("input add or remove or \"Q\" to exit");
                     String option = input.next();
                     String addNum;
@@ -156,6 +181,7 @@ public class CusInt {
 
                         case "Q":
                             ok = true;
+                            return;
                         
                         default:
                             System.out.println("Please select the correct choice.");
@@ -237,7 +263,7 @@ public class CusInt {
                 case 3:
                     System.out.print("Please enter the OrderID that you want to change: ");
                     oID = input.next();
-                    orderAlter(oID, input);
+                    if (checkOrder(oID)) orderAlter(oID, input);
                     break;
 
                 case 4:

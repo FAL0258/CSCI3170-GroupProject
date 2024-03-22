@@ -84,13 +84,67 @@ public class OrderAlter {
     }
 
     public boolean alterAdd(String key, String oID, int quantity, String today){
+
         String targetISBN = map.get(key);
         int bookStock = getBookStock(targetISBN);
 
         PreparedStatement pstmt;
         String query;
         if (quantity > bookStock){
-            System.out.println("Insufficient stock of the current book");
+            System.out.println("Insufficient stock of the current book\n");
+            return false;
+        }
+        else{
+            try{
+                // Update 'copies' FROM book
+                int updatedCopies = bookStock - quantity;
+                query = "UPDATE book SET copies = ? WHERE ISBN = ? ";
+                pstmt = currSession.prepareStatement(query);
+                pstmt.setInt(1, updatedCopies);
+                pstmt.setString(2, targetISBN);
+                pstmt.executeUpdate();
+
+                // Update 'oDate' and 'charge' FROM orders
+                int addedBookPrice = (quantity*getBookPrice(targetISBN)) + (quantity*10);
+
+                int updatedPrice = addedBookPrice + getOrderCharge(oID); 
+                query = "UPDATE orders SET oDate = ?, charge = ? WHERE oID = ? ";
+                pstmt = currSession.prepareStatement(query);
+                pstmt.setString(1, today);
+                pstmt.setInt(2, updatedPrice);
+                pstmt.setString(3, oID);
+                pstmt.executeUpdate();
+
+                // Update 'quantity' FROM bookOrdered
+                int updatedQuantity = getOrderQuantity(oID, targetISBN) + quantity;
+                query = "UPDATE bookOrdered SET quantity = ? WHERE ISBN = ? AND oID = ?";
+                pstmt = currSession.prepareStatement(query);
+                pstmt.setInt(1, updatedQuantity);
+                pstmt.setString(2, targetISBN);
+                pstmt.setString(3, oID);
+                pstmt.executeUpdate();
+
+                System.out.println("Database updated successfully.");
+                System.out.println();
+
+                return true;
+            }
+            catch (SQLException e){
+                System.out.println(e);
+                return false;
+            }
+        }
+    }
+
+    public boolean alterRemove(String key, String oID, int quantity, String today){
+
+        String targetISBN = map.get(key);
+        int bookStock = getBookStock(targetISBN);
+
+        PreparedStatement pstmt;
+        String query;
+        if (quantity > bookStock){
+            System.out.println("Insufficient stock of the current book\n");
             return false;
         }
         else{
