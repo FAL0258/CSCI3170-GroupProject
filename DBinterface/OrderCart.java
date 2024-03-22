@@ -150,6 +150,8 @@ public class OrderCart {
             pstmt.setString(5, cID);
             pstmt.execute();
 
+            System.out.println("Database updated successfully.");
+            System.out.println();
 
         }
         catch(SQLException e){

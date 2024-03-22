@@ -103,6 +103,7 @@ public class CusInt {
     public void orderAlter(String oID, Scanner input){
         boolean ok = false;
         boolean shipped = false;
+        boolean exit = false;
         while (!ok){
             try{
                 OrderAlter alterList = new OrderAlter(currSession);
@@ -128,6 +129,10 @@ public class CusInt {
                         System.out.println("book no: " + bookNo++ + "\tISBN = " + subRs.getString("ISBN") + "\tquantity = " + subRs.getInt("quantity"));
                     }
                 }
+
+                System.out.println();
+                if (exit) return;
+
                 if (count == 0){
                     System.out.println("Order not found!");
                 }
@@ -142,7 +147,7 @@ public class CusInt {
                         case "add":
                             System.out.print("Input the number: ");
                             addNum = input.next();
-                            alterList.alterAdd(pickedBook, Integer.valueOf(addNum));
+                            exit = alterList.alterAdd(pickedBook, oID, Integer.valueOf(addNum), today);
                             break;
                         
                         case "remove":
