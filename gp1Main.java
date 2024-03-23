@@ -29,6 +29,6 @@ class gp1Main{
 
         // For local testing
         // Connection con = null;
-        new DbSys(con);
+        new DbSysInt(con);
     }
 }
