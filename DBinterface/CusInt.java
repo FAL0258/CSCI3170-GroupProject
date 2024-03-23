@@ -92,7 +92,7 @@ public class CusInt {
         System.out.println(">> Input ISBN and then the quantity.");
         System.out.println(">> You can press \"L\" to see ordered list, or \"F\" to finish ordering.");
         while(!ok){
-            System.out.print("Please enter the book's ISBN: ");
+            System.out.print("Please enter the book's ISBN or \"Q\" to quit: ");
             response = input.next();
             switch (response) {
                 case "L":
@@ -103,19 +103,28 @@ public class CusInt {
                     ok = true;
                     cart.updateBackDB(today, cID);
                     break;
+
+                case "Q":
+                    return;
             
                 default:
                     if (cart.getBookStock(response) == -1){
                         break;
                     }
                     System.out.print("Please enter the quantity of the order: ");
-                    desiredQuantity = Integer.parseInt(input.next());
-                    if (desiredQuantity < 1){
-                        System.out.println("You need to enter at least one quantity!");
+                    try{
+                        desiredQuantity = Integer.parseInt(input.next());
+                        if (desiredQuantity < 1){
+                            System.out.println("You need to enter at least one quantity!");
+                        }
+                        else{
+                            cart.add(response, desiredQuantity);
+                        }
                     }
-                    else{
-                        cart.add(response, desiredQuantity);
+                    catch(Exception e){
+                        System.out.println("Please enter a valid number!");
                     }
+                    
                     break;
             }
         }
@@ -205,9 +214,9 @@ public class CusInt {
     public void orderQuery(String cID, Scanner input){
         System.out.print("Please input the Year: ");
         String response = input.next();
-        int qYear = Integer.parseInt(response);
 
         try{
+            int qYear = Integer.parseInt(response);
             Statement stmt = currSession.createStatement();
             String query = "SELECT * FROM orders WHERE cID = '" + cID + "' ORDER BY oID ASC";
             ResultSet rs = stmt.executeQuery(query);
@@ -231,6 +240,9 @@ public class CusInt {
         }
         catch (SQLException e) {
             System.out.println(e);
+        }
+        catch (Exception e) {
+            System.out.println("Please input a valid year!");
         }
     }
 

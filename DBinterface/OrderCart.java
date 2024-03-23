@@ -61,6 +61,13 @@ public class OrderCart {
         }
     }
 
+    public boolean emptyCart(){
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            return false;
+        }
+        return true;
+    }
+
     public void add(String ISBN, int quantity){
         int stock = getBookStock(ISBN);
         if (stock == -1) return;
@@ -94,6 +101,11 @@ public class OrderCart {
     }
 
     public void updateBackDB(String today, String cID){
+        if (emptyCart()){
+            System.out.println("The list is empty, no updates were made...");
+            return;
+        }
+
         PreparedStatement pstmt;
         String query;
         String currOrderID = getOrderID();
