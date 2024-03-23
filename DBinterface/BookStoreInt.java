@@ -86,7 +86,7 @@ public class BookStoreInt {
 
         }
         catch(Exception e){
-
+            System.out.println("Please input a valid number!");
         }
     }
 
