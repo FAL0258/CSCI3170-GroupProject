@@ -27,9 +27,15 @@ public class BookStoreInt {
 
     public boolean checkOrder(String oID){
         // Return true if the order exist in the database
+        try{
+            Statement stmt = currSession.createStatement();
 
-        System.out.println("Order not found, please try again.");
-        return false;
+            return true;
+        }
+        catch(SQLException sqlE){
+            System.out.println("Order not found, please try again.");
+            return false;
+        }
     }
 
     public boolean checkOrderShipped(String oID){
@@ -69,8 +75,19 @@ public class BookStoreInt {
         
     }
 
-    public void nMostPopular(){
-        // 
+    public void nMostPopular(Scanner input){
+        System.out.print("Please input the N popular books number: ");
+        int num;
+        try{
+            num = Integer.parseInt(input.next());
+            Statement stmt = currSession.createStatement();
+        }
+        catch(SQLException sqlE){
+
+        }
+        catch(Exception e){
+
+        }
     }
 
     public void menu(){
@@ -99,12 +116,13 @@ public class BookStoreInt {
                     break;
 
                 case 2:
-                    System.out.print("Please input the order ID: ");
+                    System.out.print("Please input the Month for Order Query (e.g.2005-09): ");
                     yearMonthDate = input.next();
                     orderQuery(yearMonthDate);
                     break;
 
                 case 3:
+                    nMostPopular(input);
                     break;
 
                 case 4:
