@@ -91,12 +91,10 @@ public class SysInt {
 
                 if (todayDDate.after(inputDDate)) {
                     System.out.println("Please input the date later than today!");
-                    dInput.next();
                     continue;
                 }
                 else if (latestDDate.after(inputDDate)){
                     System.out.println("Please input the date later than the latest day in order!");
-                    dInput.next();
                     continue;
                 }
                 else{
@@ -104,7 +102,7 @@ public class SysInt {
                 }
             }
             catch(Exception e){
-                System.out.println("Please input only the number!");
+                System.out.println("Please input only the number or match the format!");
                 dInput.next();
                 continue;
             }

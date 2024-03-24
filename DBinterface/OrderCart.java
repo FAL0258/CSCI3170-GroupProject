@@ -96,7 +96,7 @@ public class OrderCart {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
-            System.out.println(key + "\t\t\t" + value);
+            System.out.println(key + "\t\t" + value);
         }
     }
 

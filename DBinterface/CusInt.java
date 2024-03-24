@@ -178,25 +178,30 @@ public class CusInt {
                     System.out.println("input add or remove or \"Q\" to exit");
                     String option = input.next();
                     String addNum;
-                    switch(option) {
-                        case "add":
-                            System.out.print("Input the number: ");
-                            addNum = input.next();
-                            exit = alterList.alterAdd(pickedBook, oID, Integer.valueOf(addNum), today);
-                            break;
-                        
-                        case "remove":
-                            System.out.print("Input the number: ");
-                            addNum = input.next();
-                            exit = alterList.alterRemove(pickedBook, oID, Integer.valueOf(addNum), today);
-                            break;
+                    try{
+                        switch(option) {
+                            case "add":
+                                System.out.print("Input the number: ");
+                                addNum = input.next();
+                                exit = alterList.alterAdd(pickedBook, oID, Integer.valueOf(addNum), today);
+                                break;
+                            
+                            case "remove":
+                                System.out.print("Input the number: ");
+                                addNum = input.next();
+                                exit = alterList.alterRemove(pickedBook, oID, Integer.valueOf(addNum), today);
+                                break;
 
-                        case "Q":
-                            ok = true;
-                            return;
-                        
-                        default:
-                            System.out.println("Please select the correct choice.");
+                            case "Q":
+                                ok = true;
+                                return;
+                            
+                            default:
+                                System.out.println("Please select the correct choice.");
+                        }
+                    }
+                    catch(Exception e) {
+                        System.out.println("Invalid input, please try again.");
                     }
                 }
                 else{
@@ -236,6 +241,10 @@ public class CusInt {
                     System.out.println("Shipping stauts : " + rs.getString("status"));
                     System.out.println();
                 }
+            }
+
+            if (recordCount == 1){
+                System.out.println("No records found...\n");
             }
         }
         catch (SQLException e) {

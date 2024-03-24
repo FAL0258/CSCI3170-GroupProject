@@ -63,6 +63,7 @@ public class DbSysInt {
                     return;
                 default:
                     System.out.println("Please select the correct choice.");
+                    continue;
             }
 
         }
