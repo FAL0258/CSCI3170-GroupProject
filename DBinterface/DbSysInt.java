@@ -54,10 +54,10 @@ public class DbSysInt {
                     new CusInt(currSession, input, date);
                     break;
                 case 3:
-                    new BookInt(currSession, input);
+                    new BookStoreInt(currSession, input);
                     break;
                 case 4:
-                    new BookStoreInt(currSession, input);
+                    new BookInt(currSession, input);
                     break;
                 case 5:
                     return;
