@@ -33,11 +33,15 @@ public class BookStoreInt {
             PreparedStatement pstmt = currSession.prepareStatement(query);
             pstmt.setString(1, oID);
             ResultSet rs = pstmt.executeQuery();
+            int count = 0;
             if (rs.next()) {
-                int count = rs.getInt(1);
-                return count > 0; 
+                count = rs.getInt(1);
             }
             rs.close();
+            if (count < 1){ 
+                System.out.println("Order not found!");
+            }
+            return count > 0; 
         }
         catch(SQLException e){
             System.out.println("Order not found!");
@@ -64,8 +68,14 @@ public class BookStoreInt {
             System.out.println("Invalid Order ID for update.");
             return false;
         }
-        System.out.println("The order has been shipped. Please select the other order");
-        return status == 'Y';
+        if(status == 'Y'){
+            return true;
+        }
+        else {
+            System.out.println("The order has been shipped. Please select the other order");
+            return false;
+        }
+
     }
 
     public int getOrderQuantity(String oID){
@@ -79,7 +89,7 @@ public class BookStoreInt {
             pstmt.setString(1, oID);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                orderQuantity = rs.getInt("quantity");
+                orderQuantity = rs.getInt("total");
             } else {
                 System.out.println("No records found for order ID: " + oID);
             }
@@ -134,7 +144,7 @@ public class BookStoreInt {
     
 
         System.out.print("Are you sure to update the shipping status? (Yes=Y) ");
-        String updateStatus = input.nextLine().trim();
+        String updateStatus = input.next();
         if (updateStatus.equalsIgnoreCase("Y")) {
             // Update the shipping status to 'Y'
             updateOrderStatus(oID);
