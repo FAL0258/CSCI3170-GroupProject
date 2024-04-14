@@ -169,7 +169,7 @@ public class BookStoreInt {
                 totalCharge += charge; 
 
                 counter++;
-
+                System.out.println("\n");
                 System.out.println("Record : " + counter);
                 System.out.println("order_id : " + rs.getString("oID"));
                 System.out.println("customer_id : " + rs.getString("cID"));
@@ -187,24 +187,28 @@ public class BookStoreInt {
         }
     }
 
-    public void nMostPopular(Scanner input){
-        int num = input.nextInt();
-        input.nextLine();
+    public void nMostPopular(int n){
         try{
-            String query = "SELECT b.ISBN, b.bTitle, SUM(bo.quantity) as totalCopies " +
-                            "FROM bookOrdered bo " +
-                            "JOIN book b ON bo.ISBN = b.ISBN " +
-                            "GROUP BY bo.ISBN " +
-                            "ORDER BY totalCopies DESC " +
-                            "LIMIT ?";           
+            String query = "SELECT b.ISBN, b.bTitle, SUM(bo.quantity) AS copies " +
+                           "FROM bookOrdered bo " +
+                           "JOIN book b ON bo.ISBN = b.ISBN " +
+                           "GROUP BY b.ISBN, b.bTitle " +
+                           "ORDER BY copies DESC " +
+                           "FETCH FIRST ? ROWS ONLY";          
             PreparedStatement pstmt = currSession.prepareStatement(query);
-            pstmt.setInt(1, num);            
-            ResultSet rs = pstmt.executeQuery(query);
+            pstmt.setInt(1, n);            
+            ResultSet rs = pstmt.executeQuery();
+
+            int count = 0;
+
+            // Print the header
+            System.out.println("ISBN        Title                       copies");
             while (rs.next()) {
                 String ISBN = rs.getString("ISBN");
                 String title = rs.getString("bTitle");
                 int totalCopies = rs.getInt("copies");
-                System.out.println("ISBN: " + ISBN + ", Title: " + title + ", Total Ordered Copies: " + totalCopies);
+                System.out.printf("%-12s %-25s %d\n", ISBN, title, totalCopies);
+                count++;
             }
         }
         catch(SQLException sqlE){
@@ -222,6 +226,7 @@ public class BookStoreInt {
             boolean isInt = false;
             String oID;
             String yearMonthDate;
+            int num;
             while(!isInt){
                 try{
                     choice = input.nextInt();
@@ -242,13 +247,14 @@ public class BookStoreInt {
 
                 case 2:
                     System.out.print("Please input the Month for Order Query (e.g.2005-09): ");
-                    yearMonthDate = input.nextLine().trim();
+                    yearMonthDate = input.nextLine();
                     orderQuery(yearMonthDate);
                     break;
 
                 case 3:
                     System.out.print("Please input the N popular books number: ");
-                    nMostPopular(input);
+                    num = input.nextInt();
+                    nMostPopular(num);
                     break;
 
                 case 4:
