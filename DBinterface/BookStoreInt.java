@@ -190,8 +190,8 @@ public class BookStoreInt {
     public void nMostPopular(int n){
         try{
             String preQuery1 = "CREATE VIEW BKQUANTFULL AS SELECT bo.ISBN, SUM(bo.QUANTITY) as SALES FROM BOOKORDERED bo GROUP BY bo.ISBN ORDER BY SALES DESC";
-            String preQuery2 = "CREATE VIEW BKQUANT AS SELECT DISTINCT * FROM BKQUANTFULL FETCH FIRST " + n + " ROWS ONLY";
-            String query = "SELECT b.ISBN, b.BTITLE, bqf.SALES FROM BOOK b, BKQUANTFULL bqf WHERE b.ISBN = bqf.ISBN AND bqf.SALES >= ANY(SELECT SALES FROM BKQUANT)";
+            String preQuery2 = "CREATE VIEW BKQUANT AS SELECT DISTINCT * FROM BKQUANTFULL ORDER BY SALES DESC FETCH FIRST " + n + " ROWS ONLY";
+            String query = "SELECT b.ISBN, b.BTITLE, bqf.SALES FROM BOOK b, BKQUANTFULL bqf WHERE b.ISBN = bqf.ISBN AND bqf.SALES IN (SELECT SALES FROM BKQUANT)";
             String postQuery1 = "DROP VIEW BKQUANTFULL";
             String postQuery2 = "DROP VIEW BKQUANT";    
             
