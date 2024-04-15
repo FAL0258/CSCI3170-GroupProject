@@ -264,7 +264,7 @@ public class BookStoreInt {
 
                 case 2:
                     System.out.print("Please input the Month for Order Query (e.g.2005-09): ");
-                    yearMonthDate = input.nextLine();
+                    yearMonthDate = input.next();
                     orderQuery(yearMonthDate);
                     break;
 
