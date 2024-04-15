@@ -226,6 +226,7 @@ public class BookStoreInt {
             boolean isInt = false;
             String oID;
             String yearMonthDate;
+            String n;
             int num;
             while(!isInt){
                 try{
@@ -253,8 +254,14 @@ public class BookStoreInt {
 
                 case 3:
                     System.out.print("Please input the N popular books number: ");
-                    num = input.nextInt();
-                    nMostPopular(num);
+                    n = input.next();
+                    try{
+                        num = Integer.valueOf(n);
+                        nMostPopular(num);
+                    }
+                    catch(Exception e){
+                        System.out.print("Please input a valid number!");
+                    }
                     break;
 
                 case 4:
