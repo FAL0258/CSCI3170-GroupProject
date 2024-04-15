@@ -189,27 +189,33 @@ public class BookStoreInt {
 
     public void nMostPopular(int n){
         try{
-            String query = "SELECT b.ISBN, b.bTitle, SUM(bo.quantity) AS copies " +
-                           "FROM bookOrdered bo " +
-                           "JOIN book b ON bo.ISBN = b.ISBN " +
-                           "GROUP BY b.ISBN, b.bTitle " +
-                           "ORDER BY copies DESC " +
-                           "FETCH FIRST ? ROWS ONLY";          
-            PreparedStatement pstmt = currSession.prepareStatement(query);
-            pstmt.setInt(1, n);            
-            ResultSet rs = pstmt.executeQuery();
+            String preQuery1 = "CREATE VIEW BKQUANTFULL AS SELECT bo.ISBN, SUM(bo.QUANTITY) as SALES FROM BOOKORDERED bo GROUP BY bo.ISBN ORDER BY SALES DESC";
+            String preQuery2 = "CREATE VIEW BKQUANT AS SELECT DISTINCT * FROM BKQUANTFULL FETCH FIRST " + n + " ROWS ONLY";
+            String query = "SELECT b.ISBN, b.BTITLE, bqf.SALES FROM BOOK b, BKQUANTFULL bqf WHERE b.ISBN = bqf.ISBN AND bqf.SALES >= ANY(SELECT SALES FROM BKQUANT)";
+            String postQuery1 = "DROP VIEW BKQUANTFULL";
+            String postQuery2 = "DROP VIEW BKQUANT";    
+            
+            Statement stmt = currSession.createStatement();
 
+            stmt.execute(preQuery1);
+            stmt.execute(preQuery2);
+
+            ResultSet rs = stmt.executeQuery(query);
+            
             int count = 0;
 
             // Print the header
-            System.out.println("ISBN        Title                       copies");
+            System.out.println("ISBN\t\tTitle\t\t\t\tcopies");
             while (rs.next()) {
                 String ISBN = rs.getString("ISBN");
                 String title = rs.getString("bTitle");
-                int totalCopies = rs.getInt("copies");
-                System.out.printf("%-12s %-25s %d\n", ISBN, title, totalCopies);
+                int totalCopies = rs.getInt("sales");
+                System.out.printf("%-12s\t%-25s\t%d\n", ISBN, title, totalCopies);
                 count++;
             }
+
+            stmt.execute(postQuery1);
+            stmt.execute(postQuery2);
         }
         catch(SQLException sqlE){
             sqlE.printStackTrace();
