@@ -9,6 +9,7 @@ public class DbSysInt {
     public Connection currSession;
     public Scanner input;
     public String date = "0000-00-00";
+    public boolean showDate = false;
 
     public DbSysInt(Connection con){
         this.currSession = con;
@@ -17,7 +18,7 @@ public class DbSysInt {
     }
 
     public void printMenu() {
-        System.out.println("\nThe System Date is now: " + date);
+        if (showDate) System.out.println("\nThe System Date is now: " + date);
         System.out.println("<This is the Book Ordering System.>");
         System.out.println("---------------------------------------");
         System.out.println("1. System interface.");
@@ -54,10 +55,10 @@ public class DbSysInt {
                     new CusInt(currSession, input, date);
                     break;
                 case 3:
-                    new BookInt(currSession, input);
+                    new BookStoreInt(currSession, input);
                     break;
                 case 4:
-                    new BookStoreInt(currSession, input);
+                    showDate = true;
                     break;
                 case 5:
                     return;
