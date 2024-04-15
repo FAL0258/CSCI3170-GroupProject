@@ -273,7 +273,8 @@ public class BookStoreInt {
                     n = input.next();
                     try{
                         num = Integer.valueOf(n);
-                        nMostPopular(num);
+                        if (num > 0) nMostPopular(num);
+                        else System.out.print("Please input a valid number!");
                     }
                     catch(Exception e){
                         System.out.print("Please input a valid number!");
