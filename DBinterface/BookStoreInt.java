@@ -193,7 +193,7 @@ public class BookStoreInt {
         try{
             String preQuery1 = "CREATE VIEW BKQUANTFULL AS SELECT bo.ISBN, SUM(bo.QUANTITY) as SALES FROM BOOKORDERED bo GROUP BY bo.ISBN ORDER BY SALES DESC";
             String preQuery2 = "CREATE VIEW BKQUANT AS SELECT DISTINCT SALES FROM BKQUANTFULL ORDER BY SALES DESC FETCH FIRST " + n + " ROWS ONLY";
-            String query = "SELECT b.ISBN, b.BTITLE, bqf.SALES FROM BOOK b, BKQUANTFULL bqf WHERE b.ISBN = bqf.ISBN AND bqf.SALES IN (SELECT SALES FROM BKQUANT) ORDER BY SALES DESC";
+            String query = "SELECT b.ISBN, b.BTITLE, bqf.SALES FROM BOOK b, BKQUANTFULL bqf WHERE b.ISBN = bqf.ISBN AND bqf.SALES IN (SELECT SALES FROM BKQUANT) ORDER BY SALES DESC, b.BTITLE ASC, b.ISBN ASC";
             String postQuery1 = "DROP VIEW BKQUANTFULL";
             String postQuery2 = "DROP VIEW BKQUANT";    
             
@@ -213,6 +213,7 @@ public class BookStoreInt {
                 String ISBN = rs.getString("ISBN");
                 String title = rs.getString("bTitle");
                 int totalCopies = rs.getInt("sales");
+                // Rank with N accordingly
                 if (totalCopies != prevCopy){
                     if (count > n) break;
                     prevCopy = totalCopies;
