@@ -59,22 +59,24 @@ public class BookStoreInt {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 status = rs.getString("status").charAt(0);
+                if(status == 'Y'){
+                    // Shipped
+                    return true;
+                }
+                else {
+                    // Unshipped and able to proceed
+                    return false;
+                }
             } else {
                 System.out.println("No order found with ID: " + oID);
                 return false;
             }
-            rs.close();
+            // rs.close();
         } catch(SQLException e){
             System.out.println("Invalid Order ID for update.");
             return false;
         }
-        if(status == 'Y'){
-            return true;
-        }
-        else {
-            System.out.println("The order has been shipped. Please select the other order");
-            return false;
-        }
+        
 
     }
 
