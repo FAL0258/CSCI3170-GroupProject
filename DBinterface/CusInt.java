@@ -92,7 +92,7 @@ public class CusInt {
         System.out.println(">> Input ISBN and then the quantity.");
         System.out.println(">> You can press \"L\" to see ordered list, or \"F\" to finish ordering.");
         while(!ok){
-            System.out.print("Please enter the book's ISBN or \"Q\" to quit: ");
+            System.out.print("Please enter the book's ISBN, \"Q\" to quit, or \"F\" to finish ordering.: ");
             response = input.next();
             switch (response) {
                 case "L":

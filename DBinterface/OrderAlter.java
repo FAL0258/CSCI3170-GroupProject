@@ -108,6 +108,7 @@ public class OrderAlter {
                 int addedBookPrice = (quantity*getBookPrice(targetISBN)) + (quantity*10);
 
                 int updatedPrice = addedBookPrice + getOrderCharge(oID); 
+                if (getOrderCharge(oID) == 0) updatedPrice += 10;
                 query = "UPDATE orders SET oDate = ?, charge = ? WHERE oID = ? ";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setString(1, today);
@@ -163,6 +164,7 @@ public class OrderAlter {
                 int addedBookPrice = (quantity*getBookPrice(targetISBN)) + (quantity*10);
 
                 int updatedPrice = getOrderCharge(oID) - addedBookPrice; 
+                if (orderQuantity - quantity == 0) updatedPrice = 0;
                 query = "UPDATE orders SET oDate = ?, charge = ? WHERE oID = ? ";
                 pstmt = currSession.prepareStatement(query);
                 pstmt.setString(1, today);
